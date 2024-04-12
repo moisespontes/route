@@ -12,17 +12,24 @@ class Route
 {
     /** @var array */
     private $error;
+
     /** @var string */
     private $param;
+
     /** @var array */
     private $routes;
+
     /** @var string */
     private $method;
+
     /** @var string */
     private $controller;
+
     /** @var string */
     private $controlPath;
 
+    /** @var array */
+    private $url;
 
     /**
      * Route constructor.
@@ -33,10 +40,25 @@ class Route
      */
     public function __construct(string $controlPath, array $routes, array $error)
     {
+        $url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_SPECIAL_CHARS);
+
         $this->error = $error;
-        $this->routes = $routes;
         $this->controlPath = $controlPath;
-        $this->setRoutes();
+
+        $this->setUrl($url);
+        $this->setRoutes($routes);
+    }
+
+    /**
+     * Separa a url em partes
+     *
+     * @param string|null $url
+     * @return void
+     */
+    private function setUrl(?string $url): void
+    {
+        $url = "/" . $url;
+        $this->url = explode('/', $url);
     }
 
     /**
@@ -45,17 +67,38 @@ class Route
      * @param array $routes
      * @return void
      */
-    private function setRoutes()
+    private function setRoutes(array $routes): void
     {
-        $newRoutes = [];
+        $this->routes = [];
 
-        foreach ($this->routes as $route) {
-            $explode = explode('@', $route[1]);
+        foreach ($routes as $route) {
+            $dispatch = explode('@', $route[1]);
 
-            array_push($newRoutes, [$route[0], $explode[0], $explode[1]]);
+            $set = [
+                "url"        => $route[0],
+                "controller" => $dispatch[0],
+                "method"     => $dispatch[1],
+            ];
+
+            array_push($this->routes, $set);
         }
+    }
 
-        $this->routes = $newRoutes;
+    /**
+     * @param array $routeArr
+     * @param string $route
+     * @return void
+     */
+    private function setParam(array $routeArr, string &$route): void
+    {
+        foreach ($routeArr as $k => $v) {
+            if (preg_match('/^\{.*\}$/', $v) && (count($this->url) == count($routeArr))) {
+                $routeArr[$k] = $this->url[$k];
+                $this->param  = $this->url[$k];
+            }
+
+            $route = implode('/', $routeArr);
+        }
     }
 
     /**
@@ -66,28 +109,16 @@ class Route
     public function run(): void
     {
         $found = false;
-        $url = '/' . filter_input(INPUT_GET, 'url', FILTER_SANITIZE_SPECIAL_CHARS);
-        $urlArr = $this->urlArray($url);
-
-        $setParam = function ($routeArr, &$route) use ($urlArr) {
-            foreach ($routeArr as $k => $v) {
-                if ((strpos($routeArr[$k], "{") !== false) && (count($urlArr) == count($routeArr))) {
-                    $routeArr[$k] = $urlArr[$k];
-                    $this->param  = $urlArr[$k];
-                }
-
-                $route = implode('/', $routeArr);
-            }
-        };
+        $url = implode('/', $this->url);
 
         foreach ($this->routes as $route) {
-            $routeArray = explode('/', $route[0]);
-            $setParam($routeArray, $route[0]);
+            $routeArray = explode('/', $route['url']);
+            $this->setParam($routeArray, $route['url']);
 
-            if ($url == $route[0]) {
+            if ($route['url'] == $url) {
                 $found = true;
-                $this->method     = $route[2];
-                $this->controller = $route[1];
+                $this->method = $route['method'];
+                $this->controller = $route['controller'];
                 break;
             }
         }
@@ -100,19 +131,5 @@ class Route
             $controller = "{$this->controlPath}\\{$this->error[0]}";
             call_user_func([new $controller(), $this->error[1]]);
         }
-    }
-
-    /**
-     * Separa a url em partes
-     *
-     * @param string $url
-     * @return array
-     */
-    private function urlArray(string $url): array
-    {
-        $urlArray = explode('/', $url);
-        $urlArray = array_merge($urlArray);
-        $urlArray[0] = '';
-        return $urlArray;
     }
 }

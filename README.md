@@ -61,9 +61,9 @@ $routes = [
 ];
 ```
 
-##### At initialization inform the path of the controllers that was configured in ***composer.json***, the array of configured routes and an array with a controller and a method to handle routes that are not configured
+##### At initialization inform the path of the controllers that was configured in **_composer.json_**, the array of configured routes and an array with a controller and a method to handle routes that are not configured
 
-3. Na inicialização informe o caminho das controllers que foi configurado no ***composer.json***, o array de rotas configuradas e um array com uma controller e um método para tratar rotas que não estão configuradas.
+3. Na inicialização informe o caminho das controllers que foi configurado no **_composer.json_**, o array de rotas configuradas e um array com uma controller e um método para tratar rotas que não estão configuradas.
 
 #### Usage
 
@@ -75,10 +75,9 @@ $route = new \DevPontes\Route\Route($controlPath, $routes, $controlError);
 $route->run();
 ```
 
-## Author
+## Credits
 
-| [<img src="https://avatars.githubusercontent.com/u/52866537?v=4" width=120><br><sub>@moisespontes</sub>](https://github.com/moisespontes) |
-| :---: |
+- [Moises Pontes](https://github.com/moisespontes) (Developer)
 
 ## License
 
