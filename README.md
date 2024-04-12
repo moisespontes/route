@@ -1,5 +1,14 @@
 # Route by @Devpontes
 
+[![Maintainer](https://img.shields.io/badge/maintainer-@moi.pontes-blue.svg?style=flat-square)](https://instagram.com/moi.pontes)
+[![Source Code](https://img.shields.io/badge/source-moisespontes/route-blue.svg?style=flat-square)](https://github.com/moisespontes/route)
+[![PHP from Packagist](https://img.shields.io/packagist/php-v/devpontes/route.svg?style=flat-square)](https://packagist.org/packages/devpontes/route)
+[![Latest Version](https://img.shields.io/github/release/moisespontes/route.svg?style=flat-square)](https://github.com/moisespontes/route/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Build](https://img.shields.io/scrutinizer/build/g/moisespontes/route.svg?style=flat-square)](https://scrutinizer-ci.com/g/moisespontes/route)
+[![Quality Score](https://img.shields.io/scrutinizer/g/moisespontes/route.svg?style=flat-square)](https://scrutinizer-ci.com/g/moisespontes/route)
+[![Total Downloads](https://img.shields.io/packagist/dt/devpontes/route.svg?style=flat-square)](https://packagist.org/packages/devpontes/route)
+
 ## About Route componet
 
 ##### Route is a simple route component for small MVC-based projects
