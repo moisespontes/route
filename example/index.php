@@ -11,5 +11,10 @@ $routes = [
     ['/contato/{param}', 'Contact@index'],
 ];
 
-$route = new Route('App\Controller', $routes, ['NotFound', 'index']);
+$route = new Route($routes);
+$route->namespace('App\Controller');
 $route->run();
+
+if ($route->fail()) {
+    header('Location: /not-found');
+}

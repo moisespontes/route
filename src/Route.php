@@ -2,6 +2,8 @@
 
 namespace DevPontes\Route;
 
+use Throwable;
+
 /**
  * Description of Route
  *
@@ -10,8 +12,8 @@ namespace DevPontes\Route;
  */
 class Route
 {
-    /** @var array */
-    private $error;
+    /** @var Throwable */
+    private $fail;
 
     /** @var string */
     private $param;
@@ -26,7 +28,7 @@ class Route
     private $controller;
 
     /** @var string */
-    private $controlPath;
+    private $namespace;
 
     /** @var array */
     private $url;
@@ -34,19 +36,35 @@ class Route
     /**
      * Route constructor.
      *
-     * @param string $controlPath
      * @param array $routes
      * @param array $error
      */
-    public function __construct(string $controlPath, array $routes, array $error)
+    public function __construct(array $routes)
     {
         $url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_SPECIAL_CHARS);
 
-        $this->error = $error;
-        $this->controlPath = $controlPath;
-
         $this->setUrl($url);
         $this->setRoutes($routes);
+    }
+
+    /**
+     * @return Throwable|null
+     */
+    public function fail(): ?Throwable
+    {
+        return $this->fail;
+    }
+
+    /**
+     * Set namespace app
+     *
+     * @param string $namespace
+     * @return Route
+     */
+    public function namespace(string $namespace): Route
+    {
+        $this->namespace = $namespace;
+        return $this;
     }
 
     /**
@@ -102,13 +120,12 @@ class Route
     }
 
     /**
-     * Execulta a controler e o método referente a url
+     * Execulta a controller
      *
      * @return void
      */
     public function run(): void
     {
-        $found = false;
         $url = implode('/', $this->url);
 
         foreach ($this->routes as $route) {
@@ -116,20 +133,17 @@ class Route
             $this->setParam($routeArray, $route['url']);
 
             if ($route['url'] == $url) {
-                $found = true;
                 $this->method = $route['method'];
                 $this->controller = $route['controller'];
                 break;
             }
         }
 
-        if ($found) {
-            $controller = "{$this->controlPath}\\{$this->controller}";
-
+        try {
+            $controller = $this->namespace . "\\" . $this->controller;
             call_user_func([new $controller(), $this->method], $this->param);
-        } else {
-            $controller = "{$this->controlPath}\\{$this->error[0]}";
-            call_user_func([new $controller(), $this->error[1]]);
+        } catch (Throwable $th) {
+            $this->fail = $th;
         }
     }
 }
