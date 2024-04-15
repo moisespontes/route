@@ -27,7 +27,7 @@ Route é um simples componente de rotas para projetos pequenos baseados em MVC.
 Installation is available through Composer:
 
 ```bash
-"devpontes/route": "1.0.*"
+"devpontes/route": "2.*"
 ```
 
 or run
@@ -64,8 +64,8 @@ RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
 // Define routes
 $routes = [
     ['/','Home@index'],
-    ['/contact', 'Contact@index'],
     ['/about', 'About@index'],
+    ['/contact', 'Contact@index'],
     ['/blog/{artigo}', 'Blog@index'],
 ];
 ```
@@ -77,8 +77,6 @@ $routes = [
 #### Usage
 
 ```php
-<?php
-
 $namespace = "App\Controller";
 $route = new \DevPontes\Route\Route($routes);
 $route->namespace($namespace);
@@ -90,8 +88,6 @@ $route->run();
 - Para tratar rotas não configuradas use o método **_fail_**, veja:
 
 ```php
-<?php
-
 // Redirect
 if ($route->fail()) {
     header('Location: /not-found');
