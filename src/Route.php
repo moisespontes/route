@@ -2,7 +2,7 @@
 
 namespace DevPontes\Route;
 
-use Throwable;
+use DevPontes\Route\Exception\ErrorRoute;
 
 /**
  * Description of Route
@@ -12,7 +12,7 @@ use Throwable;
  */
 class Route
 {
-    /** @var Throwable */
+    /** @var ErrorRoute */
     private $fail;
 
     /** @var string */
@@ -48,9 +48,9 @@ class Route
     }
 
     /**
-     * @return Throwable|null
+     * @return ErrorRoute|null
      */
-    public function fail(): ?Throwable
+    public function fail(): ?ErrorRoute
     {
         return $this->fail;
     }
@@ -68,7 +68,7 @@ class Route
     }
 
     /**
-     * Separa a url em partes
+     * Separate the URL
      *
      * @param string|null $url
      * @return void
@@ -80,7 +80,7 @@ class Route
     }
 
     /**
-     * Configura as rotas
+     * Config the routes
      *
      * @param array $routes
      * @return void
@@ -120,7 +120,29 @@ class Route
     }
 
     /**
-     * Execulta a controller
+     * Run the controller
+     *
+     * @return void
+     */
+    private function execute(): void
+    {
+        $controller = $this->namespace . "\\" . $this->controller;
+
+        if (!class_exists($controller)) {
+            $this->fail = new ErrorRoute("Class {$controller} not found", 501);
+            return;
+        }
+
+        if (!method_exists($controller, $this->method)) {
+            $this->fail = new ErrorRoute("Method {$this->method} not found", 405);
+            return;
+        }
+
+        call_user_func([new $controller(), $this->method], $this->param);
+    }
+
+    /**
+     * Run route
      *
      * @return void
      */
@@ -135,15 +157,12 @@ class Route
             if ($route['url'] == $url) {
                 $this->method = $route['method'];
                 $this->controller = $route['controller'];
-                break;
+
+                $this->execute();
+                return;
             }
         }
 
-        try {
-            $controller = $this->namespace . "\\" . $this->controller;
-            call_user_func([new $controller(), $this->method], $this->param);
-        } catch (Throwable $th) {
-            $this->fail = $th;
-        }
+        $this->fail = new ErrorRoute("Page not found", 404);
     }
 }
