@@ -126,16 +126,18 @@ class Route
      */
     private function execute(): void
     {
+        if (empty($this->controller)) {
+            throw new ErrorRoute("Page not found", 404);
+        }
+
         $controller = $this->namespace . "\\" . $this->controller;
 
         if (!class_exists($controller)) {
-            $this->fail = new ErrorRoute("Class {$controller} not found", 501);
-            return;
+            throw new ErrorRoute("Class {$controller} not found", 501);
         }
 
         if (!method_exists($controller, $this->method)) {
-            $this->fail = new ErrorRoute("Method {$this->method} not found", 405);
-            return;
+            throw new ErrorRoute("Method {$this->method} not found", 405);
         }
 
         call_user_func([new $controller(), $this->method], $this->param);
@@ -148,21 +150,23 @@ class Route
      */
     public function run(): void
     {
-        $url = implode('/', $this->url);
+        try {
+            $url = implode('/', $this->url);
 
-        foreach ($this->routes as $route) {
-            $routeArray = explode('/', $route['url']);
-            $this->setParam($routeArray, $route['url']);
+            foreach ($this->routes as $route) {
+                $routeArray = explode('/', $route['url']);
+                $this->setParam($routeArray, $route['url']);
 
-            if ($route['url'] == $url) {
-                $this->method = $route['method'];
-                $this->controller = $route['controller'];
-
-                $this->execute();
-                return;
+                if ($route['url'] == $url) {
+                    $this->method = $route['method'];
+                    $this->controller = $route['controller'];
+                    break;
+                }
             }
-        }
 
-        $this->fail = new ErrorRoute("Page not found", 404);
+            $this->execute();
+        } catch (ErrorRoute $err) {
+            $this->fail = $err;
+        }
     }
 }
