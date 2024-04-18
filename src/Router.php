@@ -21,6 +21,9 @@ class Router
     /** @var string */
     private $controller;
 
+    /** @var mixed */
+    private $param;
+
     /**
      * Router constructor.
      *
@@ -36,6 +39,15 @@ class Router
     }
 
     /**
+     * @param mixed $param
+     * @return void
+     */
+    public function setParam(mixed $param): void
+    {
+        $this->param = $param;
+    }
+
+    /**
      * @return string
      */
     public function getUrl(): string
@@ -46,9 +58,10 @@ class Router
     /**
      * Run the controller
      *
+     * @param string $namespace
      * @return void
      */
-    public function execute(string $namespace, mixed $param): void
+    public function execute(string $namespace): void
     {
         $controller = $namespace . "\\" . $this->controller;
 
@@ -60,6 +73,6 @@ class Router
             throw new ErrorRoute("Method {$this->method} not found", 405);
         }
 
-        call_user_func([new $controller(), $this->method], $param);
+        call_user_func([new $controller(), $this->method], $this->param);
     }
 }

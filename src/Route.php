@@ -19,9 +19,6 @@ class Route
     private $fail;
 
     /** @var string */
-    private $param;
-
-    /** @var string */
     private $namespace;
 
     /** @var array */
@@ -34,7 +31,6 @@ class Route
      * Route constructor.
      *
      * @param array $routes
-     * @param array $error
      */
     public function __construct(array $routes)
     {
@@ -104,7 +100,7 @@ class Route
             if (empty($router)) {
                 throw new ErrorRoute("Page not found", 404);
             } else {
-                $router->execute($this->namespace, $this->param);
+                $router->execute($this->namespace);
             }
         } catch (ErrorRoute $err) {
             $this->fail = $err;

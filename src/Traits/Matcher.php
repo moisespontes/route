@@ -12,20 +12,20 @@ trait Matcher
      * @param string $routeUrl
      * @return string
      */
-    protected function setParam(string $routeUrl): string
+    protected function setParam(string $routeUrl, &$param): string
     {
-        $routeUrl = explode('/', $routeUrl);
+        $url = explode('/', $routeUrl);
 
-        foreach ($routeUrl as $k => $v) {
-            if (preg_match('/^\{.*\}$/', $v) && (count($this->url) == count($routeUrl))) {
-                $routeUrl[$k] = $this->url[$k];
-                $this->param  = $this->url[$k];
+        foreach ($url as $k => $v) {
+            if (preg_match('/^\{.*\}$/', $v) && (count($this->url) == count($url))) {
+                $url[$k] = $this->url[$k];
+                $param  = $this->url[$k];
             }
 
-            $route = implode('/', $routeUrl);
+            $routeUrl = implode('/', $url);
         }
 
-        return $route;
+        return $routeUrl;
     }
 
     /**
@@ -36,12 +36,15 @@ trait Matcher
      */
     protected function match(array $url): ?Router
     {
+        $param = null;
         $url = implode('/', $url);
 
+        /** @var Router $route */
         foreach ($this->routes as $route) {
-            $routeurl = $this->setParam($route->getUrl());
+            $routeurl = $this->setParam($route->getUrl(), $param);
 
             if ($routeurl == $url) {
+                $route->setParam($param);
                 return $route;
             }
         }
