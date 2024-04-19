@@ -21,7 +21,7 @@ class Router
     /** @var string */
     private $controller;
 
-    /** @var mixed */
+    /** @var string */
     private $param;
 
     /**
@@ -39,10 +39,10 @@ class Router
     }
 
     /**
-     * @param mixed $param
+     * @param string|null $param
      * @return void
      */
-    public function setParam(mixed $param): void
+    public function setParam(?string $param): void
     {
         $this->param = $param;
     }
