@@ -48,10 +48,17 @@ class Router
     }
 
     /**
-     * @return string
+     * Retorna a url completa(string) ou em partes(array)
+     *
+     * @param boolean $part
+     * @return string|array
      */
-    public function getUrl(): string
+    public function getUrl(bool $part = false): string|array
     {
+        if ($part) {
+            return explode('/', $this->url);
+        }
+
         return $this->url;
     }
 

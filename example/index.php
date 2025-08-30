@@ -7,8 +7,9 @@ require "../vendor/autoload.php";
 $routes = [
     //Rotas
     ['/','Home@index'],
+    ['/blog', 'Blog@index'],
     ['/contato', 'Contact@index'],
-    ['/contato/{p}', 'Contact@index'],
+    ['/contato/{id}', 'Contact@index'],
     ['/not-found/404', 'Notfound@index'],
 ];
 

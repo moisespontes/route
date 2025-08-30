@@ -18,7 +18,7 @@ trait Matcher
         $urlParts = explode('/', $routeUrl);
 
         foreach ($urlParts as $key => $part) {
-            if (preg_match('/^\{.*\}$/', $part) && count($this->url) == count($urlParts)) {
+            if (preg_match('/^\{.*\}$/', $part)) {
                 $urlParts[$key] = $this->url[$key];
                 $param = $this->url[$key];
             }
@@ -35,13 +35,17 @@ trait Matcher
      */
     protected function match(array $url): ?Router
     {
-        $url = implode('/', $url);
+        $urlString = implode('/', $url);
 
         /** @var Router $route */
         foreach ($this->routes as $route) {
+            if (count($url) !== count($route->getUrl(true))) {
+                continue;
+            }
+
             [$routeurl, $param] = $this->setParam($route->getUrl());
 
-            if ($routeurl == $url) {
+            if ($routeurl === $urlString) {
                 $route->setParam($param);
                 return $route;
             }
