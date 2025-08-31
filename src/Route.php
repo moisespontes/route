@@ -27,6 +27,9 @@ class Route
     /** @var array */
     private $routes = [];
 
+    /** @var boolean */
+    private $strictMode = false;
+
     /**
      * Route constructor.
      *
@@ -49,6 +52,21 @@ class Route
     }
 
     /**
+     * Enable or disable strict mode for URL normalization.
+     *
+     * - When strict mode is enabled, trailing slashes are preserved.
+     * - When disabled, trailing slashes are removed (except for root "/").
+     *
+     * @param boolean $strictMode
+     * @return self
+     */
+    public function setStrictMode(bool $strictMode): self
+    {
+        $this->strictMode = $strictMode;
+        return $this;
+    }
+
+    /**
      * Set namespace app
      *
      * @param string $namespace
@@ -61,6 +79,31 @@ class Route
     }
 
     /**
+     *  Normalize a URL string:
+     *
+     * - Trim spaces and collapse multiple slashes into one
+     * - Remove trailing slash (except root "/") when strictMode = false
+     * - Ensure the URL always starts with "/"
+     *
+     * @param string $url
+     * @return string
+     */
+    private function normalizeUrl(string $url): string
+    {
+        $url = preg_replace('#/+#', '/', trim($url));
+
+        if ($url === '' || $url === false) {
+            return '/';
+        }
+
+        if (!$this->strictMode && $url !== '/') {
+            $url = rtrim($url, '/');
+        }
+
+        return $url[0] === '/' ? $url : '/' . $url;
+    }
+
+    /**
      * Separate the URL
      *
      * @param string|null $url
@@ -68,8 +111,7 @@ class Route
      */
     private function setUrl(?string $url): void
     {
-        $url = "/" . $url;
-        $this->url = explode('/', $url);
+        $this->url = explode('/', $this->normalizeUrl($url ?? ''));
     }
 
     /**
