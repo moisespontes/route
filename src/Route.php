@@ -124,6 +124,14 @@ class Route
     private function setRoutes(array $routes): void
     {
         foreach ($routes as $route) {
+            if (!isset($route[0], $route[1])) {
+                throw new ErrorRoute("Route must be defined as ['/url', 'Controller@method']");
+            }
+
+            if (!str_contains($route[1], '@')) {
+                throw new ErrorRoute("Invalid route configuration: ({$route[0]}) => {$route[1]}");
+            }
+
             $action = explode('@', $route[1]);
             $url = preg_replace('/\{[^}]+\}/', '{}', $route[0]);
             $this->routes[] = new Router($url, $action[1], $action[0]);
