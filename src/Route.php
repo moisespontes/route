@@ -132,9 +132,9 @@ class Route
                 throw new ErrorRoute("Invalid route configuration: ({$route[0]}) => {$route[1]}");
             }
 
-            $action = explode('@', $route[1]);
+            [$controller, $method] = explode('@', $route[1]);
             $url = preg_replace('/\{[^}]+\}/', '{}', $route[0]);
-            $this->routes[] = new Router($url, $action[1], $action[0]);
+            $this->routes[] = new Router($url, $method, $controller);
         }
     }
 

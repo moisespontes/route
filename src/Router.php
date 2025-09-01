@@ -53,7 +53,7 @@ class Router
      * @param boolean $part
      * @return string|array
      */
-    public function getUrl(bool $part = false): string|array
+    public function getUrl(bool $part = false): string | array
     {
         if ($part) {
             return explode('/', $this->url);

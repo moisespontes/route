@@ -5,7 +5,7 @@ use DevPontes\Route\Route;
 require "../vendor/autoload.php";
 
 $routes = [
-    ['/','Home@index'],
+    ['/', 'Home@index'],
     ['/blog', 'Blog@index'],
     ['/contato', 'Contact@index'],
     ['/contato/{id}', 'Contact@index'],
