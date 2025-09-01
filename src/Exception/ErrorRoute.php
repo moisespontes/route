@@ -20,7 +20,7 @@ class ErrorRoute extends Exception
      * @param integer $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $message, int $code = 1, Throwable $previous = null)
+    public function __construct(string $message, int $code = 500, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

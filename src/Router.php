@@ -73,11 +73,11 @@ class Router
         $controller = $namespace . "\\" . $this->controller;
 
         if (!class_exists($controller)) {
-            throw new ErrorRoute("Class {$controller} not found", 501);
+            throw new ErrorRoute("Controller {$controller} not found", 404);
         }
 
         if (!method_exists($controller, $this->method)) {
-            throw new ErrorRoute("Method {$this->method} not found", 405);
+            throw new ErrorRoute("Method {$this->method} not found in {$controller}", 405);
         }
 
         call_user_func([new $controller(), $this->method], $this->param);
