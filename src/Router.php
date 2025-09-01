@@ -48,7 +48,7 @@ class Router
     }
 
     /**
-     * Retorna a url completa(string) ou em partes(array)
+     * Returns the complete URL (string) or in parts (array)
      *
      * @param boolean $part
      * @return string|array

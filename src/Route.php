@@ -33,12 +33,11 @@ class Route
     /**
      * Route constructor.
      *
-     * @param array $routes
+     * @param array $routes List of registered routes
+     * @param string $url Request URL
      */
-    public function __construct(array $routes)
+    public function __construct(array $routes, string $url = '')
     {
-        $url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_SPECIAL_CHARS);
-
         $this->setUrl($url);
         $this->setRoutes($routes);
     }
@@ -63,6 +62,19 @@ class Route
     public function setStrictMode(bool $strictMode): self
     {
         $this->strictMode = $strictMode;
+        return $this;
+    }
+
+    /**
+     * Set the URL
+     *
+     * @param string $url Request URL
+     * @return self
+     */
+    public function setUrl(string $url): self
+    {
+        $this->url = explode('/', $this->normalizeUrl($url));
+
         return $this;
     }
 
@@ -101,17 +113,6 @@ class Route
         }
 
         return $url[0] === '/' ? $url : '/' . $url;
-    }
-
-    /**
-     * Separate the URL
-     *
-     * @param string|null $url
-     * @return void
-     */
-    private function setUrl(?string $url): void
-    {
-        $this->url = explode('/', $this->normalizeUrl($url ?? ''));
     }
 
     /**

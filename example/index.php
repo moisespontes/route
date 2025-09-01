@@ -5,7 +5,6 @@ use DevPontes\Route\Route;
 require "../vendor/autoload.php";
 
 $routes = [
-    //Rotas
     ['/','Home@index'],
     ['/blog', 'Blog@index'],
     ['/contato', 'Contact@index'],
@@ -13,8 +12,12 @@ $routes = [
     ['/not-found/404', 'Notfound@index'],
 ];
 
+// External server, ex: Apache -> $_GET['url'];
+$url = $_SERVER['REQUEST_URI'];
+
 $route = new Route($routes);
 
+$route->setUrl($url);
 $route->namespace('App\Controller');
 $route->run();
 
