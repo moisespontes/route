@@ -11,23 +11,23 @@
 
 ## About Route componet
 
-##### Route is a simple route component for small MVC-based projects
+##### Route is a simple and lightweight route management component designed for small projects based on MVC architecture.
 
-Route é um simples componente de rotas para projetos pequenos baseados em MVC.
+O Route é um componente simples e leve de gerenciamento de rotas, projetado para pequenos projetos baseados em arquitetura MVC.
 
 ### Highlights
 
-- Rotas nomeadas. (named routes)
-- Verbos GET e POST. (GET and POST verbs)
-- Simples de configurar. (simple to set up)
-- Padrão controller/método/{paramentro}. (pattern controller/method/{parameter}).
+- Suporte a rotas nomeadas. (named routes)
+- Modo estrito para diferenciação de URLs. (strict mode)
+- Configuração simples e intuitiva. (simple to set up)
+- Padrão de rota: controller/method/{parameter}.
 
-## Installation
+## Instalação
 
-Installation is available through Composer:
+Installation is available through **Composer**:
 
 ```bash
-"devpontes/route": "2.*"
+"devpontes/route": "3.*"
 ```
 
 or run
@@ -38,9 +38,11 @@ composer require devpontes/route
 
 ## Documentation
 
-##### To use the route, it is necessary to redirect all application requests to the index.php file, which will be the **_Front Controller_**, where all application traffic will be handled, see the example
+### 1. Configuração
 
-1. Para usar o route é necessário redirecionar todas as requisições da aplicação para o arquivo index.php que será o **_Front Controller_**, onde todo o tráfego da aplicação será tratado, veja o exemplo:
+###### To use Route, all application requests must be redirected to the _index.php_ file, which will act as the **_Front Controller_**. Example using _Apache (.htaccess)_
+
+Para utilizar o Route, todas as requisições da aplicação devem ser redirecionadas para o arquivo _index.php_, que atuará como o **_Front Controller_**. Exemplo usando o _Apache (.htaccess)_:
 
 #### Apache
 
@@ -54,44 +56,82 @@ RewriteCond %{REQUEST_FILENAME} !-l
 RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
 ```
 
-##### Configure an array with the application routes
+### 2. Definição de Rotas
 
-2. Configure um array com as rotas da aplicação.
+###### Routes must be defined in an **array** in the format _[path, controller@method]_
+
+As rotas devem ser definidas em um **array** no formato _[path, controller@method]_:
 
 ```php
-<?php
-
-// Define routes
 $routes = [
-    ['/','Home@index'],
-    ['/about', 'About@index'],
-    ['/contact', 'Contact@index'],
-    ['/blog/{artigo}', 'Blog@index'],
+    ['/', 'Home@index'],
+    ['/blog', 'Blog@index'],
+    ['/contato', 'Contact@index'],
+    ['/contato/{id}', 'Contact@index'],
+    ['/not-found/404', 'Notfound@index'],
 ];
 ```
 
-##### At initialization, enter the route array. Then, use the **_namespace_** method passing the path that was configured in the **_composer.json_** autoload. Lastly, use **_rum_** to execute
+### 3. Captura da URL
 
-3. Na inicialização, informe o array de rotas. Em seguida, utilize o método **_namespace_** passando o caminho que foi configurado no autoload do **_composer.json_**. Por último, use o **_rum_** para executar.
+###### The request URL must be captured and passed to the component in the constructor or via the setter method.
 
-#### Usage
+A URL da requisição deve ser capturada e passada ao componente no construtor ou via metodo setter. Exemplo com servidor _Apache_:
 
 ```php
-$namespace = "App\Controller";
+$url = $_GET['url'];
+```
+
+ou usando a pasta publica
+
+```php
+$url = $_SERVER['REQUEST_URI'];
+```
+
+### 4. Inicialização
+
+###### On component initialization: 1 - Enter the routes array; 2 - Configure the controllers' namespace (the same as defined in _composer.json_); 3 - Run with the _run()_ method.
+
+Na inicialização do componente:
+
+1. Informe o array de rotas.
+2. Configure o **_namespace_** dos controladores (mesmo definido no _composer.json_).
+3. Execute com o método _run()_.
+
+##### Usage
+
+```php
 $route = new \DevPontes\Route\Route($routes);
-$route->namespace($namespace);
+$route->setUrl($url);
+$route->namespace("App\Controller");
 $route->run();
 ```
 
-##### To handle unconfigured routes, use the **_fail_** method, see
+### 5. Tratamento de Erros
 
-- Para tratar rotas não configuradas use o método **_fail_**, veja:
+###### To capture unconfigured routes, use the _fail_ method
+
+Para capturar rotas não configuradas, utilize o método _fail_:
 
 ```php
-// Redirect
 if ($route->fail()) {
-    header('Location: /not-found');
+    header('Location: /not-found/404');
 }
+```
+
+### 5. Modo Estrito
+
+###### Strict mode differentiates between routes with and without trailing slashes.
+
+O modo estrito diferencia rotas com e sem barra final. Exemplo:
+
+- _/sobre_ ≠ _/sobre/_ (strict mode enabled).
+- _/sobre_ = _/sobre/_ (strict mode disabled).
+
+##### Enabling/disabling
+
+```php
+$route->setStrictMode(true);
 ```
 
 ## Credits
