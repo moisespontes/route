@@ -11,7 +11,7 @@
 
 ## About Route componet
 
-##### Route is a simple and lightweight route management component designed for small projects based on MVC architecture.
+###### Route is a simple and lightweight route management component designed for small projects based on MVC architecture.
 
 O Route é um componente simples e leve de gerenciamento de rotas, projetado para pequenos projetos baseados em arquitetura MVC.
 
@@ -119,7 +119,7 @@ if ($route->fail()) {
 }
 ```
 
-### 5. Modo Estrito
+### 6. Modo Estrito
 
 ###### Strict mode differentiates between routes with and without trailing slashes.
 
